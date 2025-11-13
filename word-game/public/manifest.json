@@ -1,0 +1,8 @@
+{
+  "short_name": "word game",
+  "name": "word game created with create-react-app",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
