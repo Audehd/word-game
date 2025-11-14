@@ -1,6 +1,6 @@
 {
-  "short_name": "word game",
-  "name": "word game created with create-react-app",
+  "short_name": "to do list",
+  "name": "to-do list created with create-react-app",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
