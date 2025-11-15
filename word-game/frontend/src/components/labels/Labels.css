@@ -1,0 +1,8 @@
+.labels-wrapper {
+  margin: 40px 0;
+}
+
+.create-label-wrapper {
+  display: flex;
+  gap: 15px;
+}

@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTodos, createTodo, updateTodo, deleteTodo } from "../redux/todosSlice";
-import { fetchLabels } from "../redux/labelsSlice";
+import {
+  fetchTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  markAllAsDone,
+} from "../../redux/todosSlice";
+import "./Todos.css";
+import { fetchLabels } from "../../redux/labelsSlice";
 
 import {
   TextField,
-  Button,
-  Select,
-  MenuItem,
   List,
   ListItem,
   ListItemText,
   Checkbox,
-  Box
+  Box,
+  Button,
 } from "@mui/material";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import MyButton from "../reusable-components/Button";
+import LabelAutocomplete from "../labels/LabelsAutoComplete";
 
 function Todos() {
   const dispatch = useDispatch();
@@ -36,7 +44,7 @@ function Todos() {
         task,
         completed: false,
         labels: selectedLabelIds,
-        notes
+        notes,
       })
     );
     setTask("");
@@ -45,19 +53,32 @@ function Todos() {
   };
 
   const handleToggle = (todo) => {
-    dispatch(updateTodo({ id: todo._id, todo: { ...todo, completed: !todo.completed } }));
+    dispatch(
+      updateTodo({
+        id: todo._id,
+        todo: { ...todo, completed: !todo.completed },
+      })
+    );
   };
 
   const handleDelete = (id) => {
     dispatch(deleteTodo(id));
   };
 
-  const handleLabelChange = (e) => {
-    setSelectedLabelIds(e.target.value); // MUI Select gives array directly
+  const handleMarkAllAsDone = () => {
+    dispatch(markAllAsDone());
+  };
+
+  const taskInputProps = {
+    maxLength: 100,
+  };
+
+  const notesInputProps = {
+    maxLength: 300,
   };
 
   return (
-    <div>
+    <div className="todos-wrapper">
       {/* Task input */}
       <TextField
         value={task}
@@ -67,6 +88,8 @@ function Todos() {
         size="small"
         fullWidth
         margin="normal"
+        inputProps={taskInputProps}
+        helperText={`${task.length}/100 characters`} // shows counter
       />
 
       {/* Notes input */}
@@ -80,32 +103,51 @@ function Todos() {
         margin="normal"
         multiline
         rows={2}
+        inputProps={notesInputProps}
+        helperText={`${notes.length}/300 characters`} // shows counter
       />
-
       {/* Label multiselect */}
-      <Select
-        multiple
-        value={selectedLabelIds}
-        onChange={handleLabelChange}
-        displayEmpty
+      <LabelAutocomplete
+        labels={labels}
+        selectedLabelIds={selectedLabelIds}
+        setSelectedLabelIds={setSelectedLabelIds}
+      />
+      <MyButton
+        variant="contained"
+        onClick={handleAdd}
         fullWidth
-        margin="normal"
+        sx={{ mt: 1, mb: 2 }}
       >
-        {labels.map((label) => (
-          <MenuItem key={label._id} value={label._id}>
-            {label.name}
-          </MenuItem>
-        ))}
-      </Select>
-
-      <Button variant="contained" onClick={handleAdd} fullWidth sx={{ mt: 1, mb: 2 }}>
         Add Todo
-      </Button>
-
+      </MyButton>
       {/* List of todos */}
-      <List>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<DoneAllIcon />}
+        onClick={handleMarkAllAsDone}
+        sx={{ mb: 2 }}
+      >
+        Mark all as complete
+      </Button>
+      <List
+        sx={{
+          maxHeight: 800,
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
         {todos.map((todo) => (
           <ListItem
+            sx={{
+              minHeight: "110px",
+              border: 1,
+              borderColor: "#e0e0e0",
+              borderRadius: "10px",
+              boxShadow: "0 1px 4px rgba(0, 0, 0, 0.08)",
+            }}
             key={todo._id}
             secondaryAction={
               <Button onClick={() => handleDelete(todo._id)}>Delete</Button>
@@ -116,11 +158,23 @@ function Todos() {
               onChange={() => handleToggle(todo)}
             />
             <ListItemText
+              sx={{ mr: 5 }}
               primary={todo.task}
               secondary={
                 <>
+                  {/* Notes */}
+                  {todo.notes && (
+                    <Box sx={{ mt: 0.5, mr: 5 }}>{todo.notes}</Box>
+                  )}
                   {/* Label badges */}
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 0.5 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      flexWrap: "wrap",
+                      mt: 0.5,
+                    }}
+                  >
                     {todo.labels?.map((id) => {
                       const label = labels.find((l) => l._id === id);
                       if (!label) return null;
@@ -133,7 +187,7 @@ function Todos() {
                             border: `1px solid ${label.color}`,
                             backgroundColor: label.color,
                             color: "#fff",
-                            fontSize: "0.75rem"
+                            fontSize: "0.75rem",
                           }}
                         >
                           {label.name}
@@ -141,8 +195,6 @@ function Todos() {
                       );
                     })}
                   </Box>
-                  {/* Notes */}
-                  {todo.notes && <Box sx={{ mt: 0.5 }}>{todo.notes}</Box>}
                 </>
               }
             />

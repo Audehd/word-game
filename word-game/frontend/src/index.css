@@ -1,13 +1,37 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;      /* Makes sizing predictable */
+  margin: 0;                    /* Remove default margins */
+  padding: 0;                   /* Remove default padding */
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Quicksand', 'Roboto', 
+    -apple-system, BlinkMacSystemFont, 
+    'Segoe UI', 'Oxygen', 'Ubuntu', 
+    'Cantarell', 'Fira Sans', 'Droid Sans', 
+    'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+img, picture, video, canvas, svg {
+  display: block;               /* Avoid inline gaps */
+  max-width: 100%;              /* Responsive media */
+}
+
+input, button, textarea, select {
+  font: inherit;                /* Make form elements inherit fonts */
+}
+
+ul, ol {
+  list-style: none;             /* Remove default bullets/numbers */
+}
+
+a {
+  text-decoration: none;        /* Remove link underlines */
+  color: inherit;               /* Inherit color from parent */
 }

@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
     const labels = await Label.find();
     res.json({ success: true, data: labels });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -20,10 +20,11 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const label = await Label.findById(req.params.id);
-    if (!label) return res.status(res.status || 404).json({ success: false, error: "Label not found" });
+    if (!label)
+      return res.status(404).json({ success: false, error: "Label not found" });
     res.json({ success: true, data: label });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -34,9 +35,9 @@ router.post("/", async (req, res) => {
   try {
     const label = new Label(req.body);
     await label.save();
-    res.status(res.status || 201).json({ success: true, data: label });
+    res.status(201).json({ success: true, data: label });
   } catch (err) {
-    res.status(err.status || 400).json({ success: false, error: err.message });
+    res.status(400).json({ success: false, error: err.message });
   }
 });
 
@@ -51,11 +52,12 @@ router.put("/:id", async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!updatedLabel) return res.status(res.status || 404).json({ success: false, error: "Label not found" });
+    if (!updatedLabel)
+      return res.status(404).json({ success: false, error: "Label not found" });
 
     res.json({ success: true, data: updatedLabel });
   } catch (err) {
-    res.status(err.status || 400).json({ success: false, error: err.message });
+    res.status(400).json({ success: false, error: err.message });
   }
 });
 
@@ -65,11 +67,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const deletedLabel = await Label.findByIdAndDelete(req.params.id);
-    if (!deletedLabel) return res.status(res.status || 404).json({ success: false, error: "Label not found" });
+    if (!deletedLabel)
+      return res.status(404).json({ success: false, error: "Label not found" });
 
     res.json({ success: true, data: deletedLabel });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
