@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -42,7 +42,13 @@ const COLORS = [
   "#E6C9A8",
 ];
 
-export default function EditLabelDialog({ open, label, onClose, onSave }) {
+export default function EditLabelDialog({
+  open,
+  label,
+  onClose,
+  onSave,
+  labelInputProps,
+}) {
   const [name, setName] = useState(label.name);
   const [color, setColor] = useState(label.color);
   const [error, setError] = useState(false);
@@ -78,6 +84,7 @@ export default function EditLabelDialog({ open, label, onClose, onSave }) {
           label="Label Name"
           fullWidth
           margin="dense"
+          inputProps={labelInputProps}
           error={error}
           helperText={
             error

@@ -1,12 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./Labels.css";
-import {
-  fetchLabels,
-  createLabel,
-  updateLabel,
-  deleteLabel,
-} from "../../redux/labelsSlice";
+import { createLabel, updateLabel, deleteLabel } from "../../redux/labelsSlice";
 
 import {
   TextField,
@@ -26,10 +21,6 @@ function Labels() {
   const [currentLabel, setCurrentLabel] = useState(null);
   const [name, setName] = useState("");
   const [error, setError] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchLabels());
-  }, [dispatch]);
 
   const handleNameChange = (e) => {
     const value = e.target.value;
@@ -68,6 +59,10 @@ function Labels() {
     setEditOpen(false);
   };
 
+  const labelInputProps = {
+    maxLength: 200,
+  };
+
   return (
     <div className="labels-wrapper">
       <div className="create-label-wrapper">
@@ -77,6 +72,7 @@ function Labels() {
           placeholder="New Label"
           variant="outlined"
           size="small"
+          inputProps={labelInputProps}
           error={error}
           helperText={
             error
@@ -124,6 +120,7 @@ function Labels() {
           label={currentLabel}
           onClose={handleClose}
           onSave={handleSave}
+          labelInputProps={labelInputProps}
         />
       )}
     </div>
