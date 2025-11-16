@@ -10,6 +10,26 @@ import {
 } from "@mui/material";
 
 const COLORS = [
+  "#f44336",
+  "#e81e63",
+  "#9c27b0",
+  "#673ab7",
+  "#3f51b5",
+  "#2196f3",
+  "#03a9f4",
+  "#00bcd4",
+  "#009688",
+  "#4caf50",
+  "#8bc34a",
+  "#cddc39",
+  "#ffeb3b",
+  "#ffc107",
+  "#ff9800",
+  "#ff5722",
+  "#795548",
+  "#9e9e9e",
+  "#607d8b",
+  "#000000",
   "#F28B82",
   "#FBBC04",
   "#FFF475",
@@ -38,7 +58,9 @@ export default function EditLabelDialog({ open, label, onClose, onSave }) {
   const handleNameChange = (e) => {
     const value = e.target.value;
     setName(value);
-    if (error && value.trim()) setError(false);
+    if (error && value.trim()) {
+      setError(false);
+    }
   };
 
   const handleClose = () => {
@@ -57,7 +79,11 @@ export default function EditLabelDialog({ open, label, onClose, onSave }) {
           fullWidth
           margin="dense"
           error={error}
-          helperText={error ? "Label name cannot be empty" : ""}
+          helperText={
+            error
+              ? "Label name cannot be empty"
+              : `${name.length}/20 characters`
+          }
         />
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
           {COLORS.map((c) => (

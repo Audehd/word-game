@@ -18,10 +18,14 @@ import {
   Checkbox,
   Box,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import MyButton from "../reusable-components/Button";
 import LabelAutocomplete from "../labels/LabelsAutoComplete";
+import LabelsModal from "../labels/LabelsModal";
 
 function Todos() {
   const dispatch = useDispatch();
@@ -30,14 +34,35 @@ function Todos() {
 
   const [task, setTask] = useState("");
   const [notes, setNotes] = useState("");
+  const [error, setError] = useState(false);
   const [selectedLabelIds, setSelectedLabelIds] = useState([]);
+  const [openLabels, setOpenLabels] = useState(false);
+
+  const handleOpen = () => setOpenLabels(true);
+  const handleClose = () => setOpenLabels(false);
 
   useEffect(() => {
     dispatch(fetchTodos());
     dispatch(fetchLabels());
   }, [dispatch]);
 
+  const handleTaskChange = (e) => {
+    const value = e.target.value;
+    if (error && value) {
+      setError(false);
+    }
+    setTask(value);
+  };
+
+  const handleNotesChange = (e) => {
+    setNotes(e.target.value);
+  };
+
   const handleAdd = () => {
+    if (!task.trim()) {
+      setError(true);
+      return;
+    }
     if (!task) return;
     dispatch(
       createTodo({
@@ -47,6 +72,7 @@ function Todos() {
         notes,
       })
     );
+    setError(false);
     setTask("");
     setNotes("");
     setSelectedLabelIds([]);
@@ -79,23 +105,23 @@ function Todos() {
 
   return (
     <div className="todos-wrapper">
-      {/* Task input */}
       <TextField
         value={task}
-        onChange={(e) => setTask(e.target.value)}
+        onChange={handleTaskChange}
         placeholder="New Todo"
         variant="outlined"
         size="small"
         fullWidth
         margin="normal"
         inputProps={taskInputProps}
-        helperText={`${task.length}/100 characters`} // shows counter
+        error={error}
+        helperText={
+          error ? "Todo name cannot be empty" : `${task.length}/100 characters`
+        }
       />
-
-      {/* Notes input */}
       <TextField
         value={notes}
-        onChange={(e) => setNotes(e.target.value)}
+        onChange={handleNotesChange}
         placeholder="Notes (optional)"
         variant="outlined"
         size="small"
@@ -104,14 +130,31 @@ function Todos() {
         multiline
         rows={2}
         inputProps={notesInputProps}
-        helperText={`${notes.length}/300 characters`} // shows counter
+        helperText={`${notes.length}/300 characters`}
       />
-      {/* Label multiselect */}
-      <LabelAutocomplete
-        labels={labels}
-        selectedLabelIds={selectedLabelIds}
-        setSelectedLabelIds={setSelectedLabelIds}
-      />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          width: "100%",
+        }}
+      >
+        <LabelAutocomplete
+          labels={labels}
+          selectedLabelIds={selectedLabelIds}
+          setSelectedLabelIds={setSelectedLabelIds}
+        />
+        <Button variant="outlined" onClick={handleOpen}>
+          Edit Labels
+        </Button>
+        <Dialog open={openLabels} onClose={handleClose} fullWidth maxWidth="sm">
+          <DialogTitle>Edit Labels</DialogTitle>
+          <DialogContent>
+            <LabelsModal />
+          </DialogContent>
+        </Dialog>
+      </div>
       <MyButton
         variant="contained"
         onClick={handleAdd}
@@ -120,7 +163,6 @@ function Todos() {
       >
         Add Todo
       </MyButton>
-      {/* List of todos */}
       <Button
         variant="contained"
         color="primary"
@@ -162,11 +204,9 @@ function Todos() {
               primary={todo.task}
               secondary={
                 <>
-                  {/* Notes */}
                   {todo.notes && (
                     <Box sx={{ mt: 0.5, mr: 5 }}>{todo.notes}</Box>
                   )}
-                  {/* Label badges */}
                   <Box
                     sx={{
                       display: "flex",

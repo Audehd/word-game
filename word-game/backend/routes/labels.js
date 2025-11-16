@@ -49,7 +49,7 @@ router.put("/:id", async (req, res) => {
     const updatedLabel = await Label.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true } // Option new: true returns the updated document
     );
 
     if (!updatedLabel)

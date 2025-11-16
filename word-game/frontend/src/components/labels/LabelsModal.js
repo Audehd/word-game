@@ -17,7 +17,7 @@ import {
   Box,
 } from "@mui/material";
 import MyButton from "../reusable-components/Button";
-import EditLabelPopup from "./EditLabelPopup";
+import EditLabelModal from "./EditLabelModal";
 
 function Labels() {
   const dispatch = useDispatch();
@@ -25,13 +25,25 @@ function Labels() {
   const [editOpen, setEditOpen] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(null);
   const [name, setName] = useState("");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     dispatch(fetchLabels());
   }, [dispatch]);
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    if (error && value) {
+      setError(false);
+    }
+    setName(value);
+  };
+
   const handleAdd = () => {
-    if (!name) return;
+    if (!name.trim()) {
+      setError(true);
+      return;
+    }
     dispatch(createLabel({ name }));
     setName("");
   };
@@ -51,8 +63,8 @@ function Labels() {
   };
 
   const handleSave = (updatedLabel) => {
-    console.log("Saving label:", updatedLabel);
     dispatch(updateLabel({ id: updatedLabel._id, label: updatedLabel }));
+    setCurrentLabel(null);
     setEditOpen(false);
   };
 
@@ -61,10 +73,16 @@ function Labels() {
       <div className="create-label-wrapper">
         <TextField
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
           placeholder="New Label"
           variant="outlined"
           size="small"
+          error={error}
+          helperText={
+            error
+              ? "Label name cannot be empty"
+              : `${name.length}/20 characters`
+          }
         />
         <MyButton
           variant="contained"
@@ -101,7 +119,7 @@ function Labels() {
         ))}
       </List>
       {currentLabel && (
-        <EditLabelPopup
+        <EditLabelModal
           open={editOpen}
           label={currentLabel}
           onClose={handleClose}

@@ -1,19 +1,49 @@
 const mongoose = require("mongoose");
 
-// Predefined color palette (24 colors)
 const COLORS = [
-  "#FF6633", "#FFB399", "#FFFF99", "#00B3E6",
-  "#E6B333", "#E6B3B3", "#6680B3", "#CB99C9",
-  "#66991A", "#FF99E6", "#CCFF1A", "#FF1A66",
-  "#33FFCC", "#B366CC", "#CC80CC", "#E666FF",
-  "#4DB3FF", "#1AB399", "#E666B3", "#00E680",
-  "#FBC4AB", "#D0F0C0", "#FFB347", "#FF6961",
-  "#77DD77", "#CDA4DE", "#FFFACD", "#B0E0E6",
+  "#f44336",
+  "#e81e63",
+  "#9c27b0",
+  "#673ab7",
+  "#3f51b5",
+  "#2196f3",
+  "#03a9f4",
+  "#00bcd4",
+  "#009688",
+  "#4caf50",
+  "#8bc34a",
+  "#cddc39",
+  "#ffeb3b",
+  "#ffc107",
+  "#ff9800",
+  "#ff5722",
+  "#795548",
+  "#9e9e9e",
+  "#607d8b",
+  "#000000",
+  "#F28B82",
+  "#FBBC04",
+  "#FFF475",
+  "#CCFF90",
+  "#A7FFEB",
+  "#CBF0F8",
+  "#AECBFA",
+  "#D7AEFB",
+  "#FDCFE8",
+  "#E6C9A8",
 ];
+
 const labelSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    color: { type: String, default: () => COLORS[Math.floor(Math.random() * COLORS.length)] }
+    name: {
+      type: String,
+      maxlength: [20, "Label name cannot exceed 20 characters"],
+      required: true,
+    },
+    color: {
+      type: String,
+      default: () => COLORS[Math.floor(Math.random() * COLORS.length)],
+    },
   },
   { timestamps: true }
 );

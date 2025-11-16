@@ -1,6 +1,7 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { TextField, Autocomplete, Chip } from "@mui/material";
 import { createLabel } from "../../redux/labelsSlice";
-import { useDispatch } from "react-redux";
 
 export default function LabelAutocomplete({
   labels,
@@ -8,6 +9,24 @@ export default function LabelAutocomplete({
   setSelectedLabelIds,
 }) {
   const dispatch = useDispatch();
+  const [error, setError] = useState(false);
+
+  const handleChange = (event, newValue) => {
+    setError(false);
+    const newIds = newValue.map((item) => {
+      if (typeof item === "string") {
+        if (item.length > 20) {
+          setError(true);
+          return null;
+        }
+        addLabel(item);
+        return null;
+      } else {
+        return item._id;
+      }
+    });
+    setSelectedLabelIds(newIds);
+  };
 
   const selectedLabels = selectedLabelIds
     .map((id) => labels.find((label) => label._id === id))
@@ -16,7 +35,6 @@ export default function LabelAutocomplete({
   const addLabel = (name) => {
     if (!name) return;
 
-    // Dispatch the async thunk and wait for the result
     dispatch(createLabel({ name })).then((resultAction) => {
       if (createLabel.fulfilled.match(resultAction)) {
         const newLabelId = resultAction.payload._id;
@@ -27,21 +45,13 @@ export default function LabelAutocomplete({
 
   return (
     <Autocomplete
+      sx={{ flexGrow: 1 }}
       multiple
       freeSolo // allows adding new labels
       options={labels}
       getOptionLabel={(option) => option.name || option} // option can be string if freeSolo
       value={selectedLabels}
-      onChange={(event, newValue) => {
-        const newIds = newValue.map((item) => {
-          if (typeof item === "string") {
-            addLabel(item);
-          } else {
-            return item._id;
-          }
-        });
-        setSelectedLabelIds(newIds);
-      }}
+      onChange={handleChange}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip
@@ -60,8 +70,11 @@ export default function LabelAutocomplete({
           {...params}
           label="Labels"
           placeholder="Select or create labels"
+          onKeyDown={() => setError(false)}
           variant="outlined"
           size="small"
+          error={error}
+          helperText={error ? "Label name cannot exceed 20 characters" : ""}
         />
       )}
       isOptionEqualToValue={(option, value) => option._id === value._id}
