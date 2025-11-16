@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema, Document } from "mongoose";
 
-const COLORS = [
+const COLORS: string[] = [
   "#f44336",
   "#e81e63",
   "#9c27b0",
@@ -33,7 +33,12 @@ const COLORS = [
   "#E6C9A8",
 ];
 
-const labelSchema = new mongoose.Schema(
+export interface ILabel extends Document {
+  name: string;
+  color: string;
+}
+
+const LabelSchema = new Schema<ILabel>(
   {
     name: {
       type: String,
@@ -48,4 +53,5 @@ const labelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Label", labelSchema);
+const Label = mongoose.model<ILabel>("Label", LabelSchema);
+export default Label;

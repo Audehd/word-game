@@ -1,15 +1,16 @@
-const express = require("express");
-const router = express.Router();
-const Label = require("../models/Label");
+import { Router, type Request, type Response } from "express";
+import Label from "../models/Label.js";
+
+const router = Router();
 
 // ==========================
 // GET all labels
 // ==========================
-router.get("/", async (req, res) => {
+router.get("/", async (_req: Request, res: Response) => {
   try {
     const labels = await Label.find();
     res.json({ success: true, data: labels });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -17,13 +18,14 @@ router.get("/", async (req, res) => {
 // ==========================
 // GET single label by ID
 // ==========================
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req: Request, res: Response) => {
   try {
     const label = await Label.findById(req.params.id);
-    if (!label)
+    if (!label) {
       return res.status(404).json({ success: false, error: "Label not found" });
+    }
     res.json({ success: true, data: label });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -31,12 +33,12 @@ router.get("/:id", async (req, res) => {
 // ==========================
 // POST create new label
 // ==========================
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const label = new Label(req.body);
     await label.save();
     res.status(201).json({ success: true, data: label });
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).json({ success: false, error: err.message });
   }
 });
@@ -44,19 +46,20 @@ router.post("/", async (req, res) => {
 // ==========================
 // PUT update label by ID
 // ==========================
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req: Request, res: Response) => {
   try {
     const updatedLabel = await Label.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true } // Option new: true returns the updated document
+      { new: true, runValidators: true }
     );
 
-    if (!updatedLabel)
+    if (!updatedLabel) {
       return res.status(404).json({ success: false, error: "Label not found" });
+    }
 
     res.json({ success: true, data: updatedLabel });
-  } catch (err) {
+  } catch (err: any) {
     res.status(400).json({ success: false, error: err.message });
   }
 });
@@ -64,16 +67,18 @@ router.put("/:id", async (req, res) => {
 // ==========================
 // DELETE label by ID
 // ==========================
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const deletedLabel = await Label.findByIdAndDelete(req.params.id);
-    if (!deletedLabel)
+
+    if (!deletedLabel) {
       return res.status(404).json({ success: false, error: "Label not found" });
+    }
 
     res.json({ success: true, data: deletedLabel });
-  } catch (err) {
+  } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-module.exports = router;
+export default router;

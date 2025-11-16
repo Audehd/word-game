@@ -1,25 +1,27 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+import "dotenv/config";
+import express, { type Application } from "express";
+import mongoose from "mongoose";
+import cors from "cors";
 
-const app = express();
+import todoRoutes from "./routes/todos.js";
+import labelRoutes from "./routes/labels.js";
+
+const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
+if (!process.env.MONGO_URI) {
+  throw new Error("MONGO_URI environment variable is not defined");
+}
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Routes
-const todoRoutes = require("./routes/todos");
 app.use("/todos", todoRoutes);
-
-const labelRoutes = require("./routes/labels");
 app.use("/labels", labelRoutes);
 
 app.listen(PORT, () => {
