@@ -13,7 +13,7 @@ const router = Router();
 // ==========================
 router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   const labels = await Label.find();
-  res.json({ success: true, data: labels });
+  res.status(200).json({ success: true, data: labels });
 });
 
 // ==========================
@@ -24,7 +24,7 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   if (!label) {
     return res.status(404).json({ success: false, error: "Label not found" });
   }
-  res.json({ success: true, data: label });
+  res.status(200).json({ success: true, data: label });
 });
 
 // ==========================
@@ -47,7 +47,7 @@ router.put("/:id", async (req: Request, res: Response, next: NextFunction) => {
   if (!updatedLabel) {
     return res.status(404).json({ success: false, error: "Label not found" });
   }
-  res.json({ success: true, data: updatedLabel });
+  res.status(200).json({ success: true, data: updatedLabel });
 });
 
 // ==========================
@@ -60,7 +60,7 @@ router.delete(
     if (!deletedLabel) {
       return res.status(404).json({ success: false, error: "Label not found" });
     }
-    res.json({ success: true, data: deletedLabel });
+    res.status(204).json({ success: true, data: deletedLabel });
   }
 );
 

@@ -8,7 +8,7 @@ const router = Router();
 // ==========================
 router.get("/getNotDoneTodos", async (req, res) => {
   const todos = await Todo.aggregate([{ $match: { completed: false } }]);
-  res.json({ success: true, data: todos });
+  res.status(200).json({ success: true, data: todos });
 });
 
 // ==========================
@@ -16,7 +16,7 @@ router.get("/getNotDoneTodos", async (req, res) => {
 // ==========================
 router.get("/getDoneTodos", async (req, res) => {
   const todos = await Todo.aggregate([{ $match: { completed: true } }]);
-  res.json({ success: true, data: todos });
+  res.status(200).json({ success: true, data: todos });
 });
 
 // ==========================
@@ -24,7 +24,7 @@ router.get("/getDoneTodos", async (req, res) => {
 // ==========================
 router.get("/", async (_req: Request, res: Response) => {
   const todos = await Todo.find();
-  res.json({ success: true, data: todos });
+  res.status(200).json({ success: true, data: todos });
 });
 
 // ==========================
@@ -35,7 +35,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   if (!todo) {
     return res.status(404).json({ success: false, error: "Todo not found" });
   }
-  res.json({ success: true, data: todo });
+  res.status(200).json({ success: true, data: todo });
 });
 
 // ==========================
@@ -84,7 +84,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   if (!updatedTodo) {
     return res.status(404).json({ success: false, error: "Todo not found" });
   }
-  res.json({ success: true, data: updatedTodo });
+  res.status(200).json({ success: true, data: updatedTodo });
 });
 
 // ==========================
@@ -95,7 +95,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   if (!deletedTodo) {
     return res.status(404).json({ success: false, error: "Todo not found" });
   }
-  res.json({ success: true, data: deletedTodo });
+  res.status(204).json({ success: true, data: deletedTodo });
 });
 
 export default router;
