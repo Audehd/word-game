@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchTodos,
   createTodo,
   updateTodo,
   deleteTodo,
   markAllAsDone,
+  fetchNotDoneTodos,
+  fetchDoneTodos,
 } from "../../redux/todosSlice";
 import "./Todos.css";
 import { fetchLabels } from "../../redux/labelsSlice";
@@ -24,6 +25,7 @@ import {
 } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import MyButton from "../reusable-components/Button";
+import ShowDoneSwitch from "./ShowDoneSwitch";
 import LabelAutocomplete from "../labels/LabelsAutoComplete";
 import LabelsModal from "../labels/LabelsModal";
 
@@ -37,14 +39,18 @@ function Todos() {
   const [error, setError] = useState(false);
   const [selectedLabelIds, setSelectedLabelIds] = useState([]);
   const [openLabels, setOpenLabels] = useState(false);
+  const [showDone, setShowDone] = useState(false);
+  const [hasFetchedDone, setHasFetchedDone] = useState(false);
 
   const handleOpen = () => setOpenLabels(true);
   const handleClose = () => setOpenLabels(false);
 
   useEffect(() => {
-    dispatch(fetchTodos());
+    dispatch(fetchNotDoneTodos());
     dispatch(fetchLabels());
   }, [dispatch]);
+
+  useEffect(() => {}, [dispatch]);
 
   const handleTaskChange = (e) => {
     const value = e.target.value;
@@ -94,6 +100,20 @@ function Todos() {
   const handleMarkAllAsDone = () => {
     dispatch(markAllAsDone());
   };
+
+  const handleToggleShowDone = () => {
+    const nextValue = !showDone;
+    setShowDone(nextValue);
+
+    if (nextValue && !hasFetchedDone) {
+      dispatch(fetchDoneTodos());
+      setHasFetchedDone(true);
+    }
+  };
+
+  const visibleTodos = useMemo(() => {
+    return todos.filter((todo) => showDone || !todo.completed);
+  }, [todos, showDone]);
 
   const taskInputProps = {
     maxLength: 100,
@@ -163,15 +183,18 @@ function Todos() {
       >
         Add Todo
       </MyButton>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<DoneAllIcon />}
-        onClick={handleMarkAllAsDone}
-        sx={{ mb: 2 }}
-      >
-        Mark all as complete
-      </Button>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<DoneAllIcon />}
+          onClick={handleMarkAllAsDone}
+          sx={{ mb: 2, mr: "auto" }}
+        >
+          Mark all as complete
+        </Button>
+        <ShowDoneSwitch showDone={showDone} onToggle={handleToggleShowDone} />
+      </div>
       <List
         sx={{
           maxHeight: 800,
@@ -181,7 +204,7 @@ function Todos() {
           gap: "10px",
         }}
       >
-        {todos.map((todo) => (
+        {visibleTodos.map((todo) => (
           <ListItem
             sx={{
               minHeight: "110px",

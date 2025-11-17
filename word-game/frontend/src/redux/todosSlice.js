@@ -37,11 +37,26 @@ export const markAllAsDone = createAsyncThunk(
   }
 );
 
-// Mark all as not done
 export const markAllAsNotDone = createAsyncThunk(
   "todos/markAllAsNotDone",
   async () => {
     const res = await axios.put(`${API_URL}/markAllAsNotDone`);
+    return res.data.data;
+  }
+);
+
+export const fetchNotDoneTodos = createAsyncThunk(
+  "todos/getNotDoneTodos",
+  async () => {
+    const res = await axios.get(`${API_URL}/getNotDoneTodos`);
+    return res.data.data;
+  }
+);
+
+export const fetchDoneTodos = createAsyncThunk(
+  "todos/getDoneTodos",
+  async () => {
+    const res = await axios.get(`${API_URL}/getDoneTodos`);
     return res.data.data;
   }
 );
@@ -98,6 +113,26 @@ const todosSlice = createSlice({
       })
       .addCase(markAllAsNotDone.rejected, (state, action) => {
         state.error = action.error?.message || "Failed to mark all complete";
+      })
+      .addCase(fetchNotDoneTodos.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(fetchNotDoneTodos.rejected, (state, action) => {
+        state.error =
+          action.error?.message || "Failed to fetch uncompleted todos";
+      })
+      .addCase(fetchDoneTodos.fulfilled, (state, action) => {
+        // merge + dedupe by _id
+        const merged = [...state.items, ...action.payload];
+
+        const todos = Array.from(
+          new Map(merged.map((todo) => [todo._id, todo])).values()
+        );
+        state.items = todos;
+      })
+      .addCase(fetchDoneTodos.rejected, (state, action) => {
+        state.error =
+          action.error?.message || "Failed to fetch completed todos";
       });
   },
 });

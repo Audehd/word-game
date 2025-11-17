@@ -4,6 +4,22 @@ import Todo from "../models/Todo.js";
 const router = Router();
 
 // ==========================
+// GET uncompleted todos
+// ==========================
+router.get("/getNotDoneTodos", async (req, res) => {
+  const todos = await Todo.aggregate([{ $match: { completed: false } }]);
+  res.json({ success: true, data: todos });
+});
+
+// ==========================
+// GET completed todos
+// ==========================
+router.get("/getDoneTodos", async (req, res) => {
+  const todos = await Todo.aggregate([{ $match: { completed: true } }]);
+  res.json({ success: true, data: todos });
+});
+
+// ==========================
 // GET all todos
 // ==========================
 router.get("/", async (_req: Request, res: Response) => {
