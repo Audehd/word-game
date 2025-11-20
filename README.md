@@ -55,15 +55,6 @@ npm run build
 npm start
 ```
 
-## 📚 API Endpoints (if applicable)
-
-Example:
-
-- `GET /todos` — fetch all todos
-- `POST /todos` — create a new todo
-- `PUT /todos/:id` — update a todo
-- `DELETE /todos/:id` — remove a todo
-
 ## 📄 License
 
 This project is licensed under the MIT License.
