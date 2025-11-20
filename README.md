@@ -64,21 +64,6 @@ Example:
 - `PUT /todos/:id` — update a todo
 - `DELETE /todos/:id` — remove a todo
 
-## 📁 Project Structure
-
-```
-root/
- ├── src/
- │    ├── components/
- │    ├── pages/
- │    ├── services/
- │    ├── store/
- │    └── App.tsx
- ├── server/
- ├── package.json
- └── README.md
-```
-
 ## 📄 License
 
 This project is licensed under the MIT License.
